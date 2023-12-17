@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple Browser</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+        }
+
+        #browser-container {
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+        }
+
+        #address-bar {
+            display: flex;
+            padding: 10px;
+            background-color: #333;
+            color: #fff;
+        }
+
+        #back-button,
+        #forward-button {
+            margin-right: 10px;
+            cursor: pointer;
+        }
+
+        #address-input {
+            flex: 1;
+            margin-right: 10px;
+            padding: 5px;
+            font-size: 14px;
+        }
+
+        #go-button {
+            cursor: pointer;
+            padding: 5px;
+            font-size: 14px;
+        }
+
+        #browser-content {
+            flex: 1;
+            border: none;
+        }
+    </style>
+</head>
+<body>
+    <div id="browser-container">
+        <div id="address-bar">
+            <div id="back-button">←</div>
+            <div id="forward-button">→</div>
+            <input id="address-input" type="text" placeholder="Enter URL">
+            <div id="go-button">Go</div>
+        </div>
+        <iframe id="browser-content" src="" frameborder="0"></iframe>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const backButton = document.getElementById('back-button');
+            const forwardButton = document.getElementById('forward-button');
+            const addressInput = document.getElementById('address-input');
+            const goButton = document.getElementById('go-button');
+            const browserContent = document.getElementById('browser-content');
+
+            const history = [];
+            let currentIndex = -1;
+
+            function navigate(url) {
+                browserContent.src = url;
+            }
+
+            function updateButtons() {
+                backButton.disabled = currentIndex <= 0;
+                forwardButton.disabled = currentIndex >= history.length - 1;
+            }
+
+            backButton.addEventListener('click', function () {
+                if (currentIndex > 0) {
+                    currentIndex--;
+                    navigate(history[currentIndex]);
+                    updateButtons();
+                }
+            });
+
+            forwardButton.addEventListener('click', function () {
+                if (currentIndex < history.length - 1) {
+                    currentIndex++;
+                    navigate(history[currentIndex]);
+                    updateButtons();
+                }
+            });
+
+            goButton.addEventListener('click', function () {
+                const url = addressInput.value;
+                navigate(url);
+
+                // Update history
+                currentIndex++;
+                history.splice(currentIndex, history.length - currentIndex, url);
+
+                updateButtons();
+            });
+
+            navigate('https://www.example.com');
+        });
+    </script>
+</body>
+</html>
